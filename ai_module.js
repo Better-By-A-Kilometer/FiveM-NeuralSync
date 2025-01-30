@@ -94,7 +94,9 @@ class Ped {
 exports('ai-message', async function (netId: number, name: string, message: string) {
     const ped: Ped = GetPed(netId, name);
     if (!ped) throw new Error("Ped should exist! This should not occur.");
-    return await ped.Ask(message);
+    const response = await ped.Ask(message);
+    emitNet("visualize-message", netId, response);
+    return response;
 });
 
 /* 
