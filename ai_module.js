@@ -81,7 +81,7 @@ class Ped {
     // This method is used to address the ped directly as the local player.
     async Ask(message: string) {
         if (!this.conversation) throw new Error('Ped is not in a conversation.');
-        this.conversation.AddMessage('user', `Player says to ${this.Name}: ${message}`);
+        this.conversation.AddMessage('user', `[World Time: ${GetTimeAsString(GetNetworkTimeAccurate()) || "You don't have the time."}] Player says to ${this.Name}: ${message}`);
         // Ask the AI
         const completion = await client.completions.create({
             messages: this.conversation.Conversation,
