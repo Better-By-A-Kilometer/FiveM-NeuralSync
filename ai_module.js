@@ -96,3 +96,8 @@ exports('ai-message', async function (netId: number, name: string, message: stri
     if (!ped) throw new Error("Ped should exist! This should not occur.");
     return await ped.Ask(message);
 });
+
+/* 
+* USAGE:
+* response = exports['Kilo_AIPeds']['ai-message'](networkId, name, message);
+* */
