@@ -1,9 +1,1 @@
-const resourceName: string = GetCurrentResourceName();
-const moduleName: string = "SmartPeds";
-const ePrefix = `${resourceName}:${moduleName}`;
-
-onNet(`${ePrefix}::sendAIMessage`, function (netId: number, name: string, message: string, code: string) {
-    const response = exports[resourceName]['ai-message'](netId, name, message);
-    
-    emitNet(`${ePrefix}::sendAIMessage:Code=${code}`, source, response);
-})
+"use strict";(()=>{var __getOwnPropNames=Object.getOwnPropertyNames;var __commonJS=(cb,mod)=>function __require(){return mod||(0,cb[__getOwnPropNames(cb)[0]])((mod={exports:{}}).exports,mod),mod.exports};var require_server=__commonJS({"modules/SmartPeds/server/server.ts"(exports){var resourceName=GetCurrentResourceName();var moduleName="SmartPeds";var ePrefix=`${resourceName}:${moduleName}`;onNet(`${ePrefix}::sendAIMessage`,function(netId,name,message,code){const response=exports[resourceName]["ai-message"](netId,name,message);emitNet(`${ePrefix}::sendAIMessage:Code=${code}`,source,response)})}});require_server();})();
