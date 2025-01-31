@@ -62,7 +62,13 @@ CreateThread(function () {
         var netId = NetworkGetNetworkIdFromEntity(closestPed) || -1;
         if (!netId || netId < 0)
             return ShowNotification("This ped isn't AI enabled!")
-
+        
+        // Debug
+        console.log(`Script ID: ${NetworkGetEntityNetScriptId(closestPed)}`)
+        console.log(`IsNetworked: ${NetworkGetEntityIsNetworked(closestPed)}`)
+        console.log(`IsLocal: ${NetworkGetEntityIsLocal(closestPed)}`)
+        console.log(`Entity Owner ID: ${NetworkGetEntityOwner(closestPed)}`)
+        //
         const msg = await ShowKeyboard();
         const response = exports[resourceName]['ai-message'](netId, "Stranger", msg);
         
