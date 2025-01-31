@@ -57,7 +57,7 @@ CreateThread(function () {
         if (source <= 0) return;
 
         var closestPed = GetClosestPedToPlayer(PlayerPedId(), 5.0);
-        if (closestPed < 0)
+        if (closestPed < 0) 
             return ShowNotification("There's no peds nearby to speak to.");
         var netId = NetworkGetNetworkIdFromEntity(closestPed) || -1;
         if (!netId || netId < 0)
@@ -82,5 +82,5 @@ CreateThread(function () {
         emit("visualize-message", netId, response);
     });
 
-    RegisterKeyMapping("talk", "Talk to an AI", "keyboard", "e");  
+    RegisterKeyMapping("talk", "Talk to an AI", "keyboard", "y");  
 })
