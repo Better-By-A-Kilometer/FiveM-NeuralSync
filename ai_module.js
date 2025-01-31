@@ -1,20 +1,13 @@
 // ENV: Server
-
+const resourceName = GetCurrentResourceName() || "Kilo_AIPeds";
 const OpenAI = require('openai');
 
-const {openaiKey} = require('./config.json');
-const net = require("node:net");
-
+const {openaiKey} = LoadResourceFile(resourceName, "config.json");
 if (!openaiKey) throw new Error('OpenAI key not found in config.json!');
+
 const client = new OpenAI({
     apiKey: openaiKey
 });
-
-const conversations = {}; // { [token]: [] // Conversation data }
-
-function NewToken() {
-    return Math.random().toString(36).substr(2, 9);
-}
 
 enum ConversationRoles {
     user

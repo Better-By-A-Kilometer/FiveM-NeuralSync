@@ -1,3 +1,5 @@
+// ENV: Client
+
 let textOnPeds = {};
 
 // Function to draw text in 3D space
