@@ -1,0 +1,17 @@
+{
+  "engines": {
+    "node": "16.20.2"
+  },
+  "dependencies": {
+    "openai": "^4.81.0"
+  },
+  "name": "fivem-ai-peds",
+  "version": "1.0.0",
+  "main": "ai_module.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DevKilo",
+  "license": "MIT",
+  "description": ""
+}
