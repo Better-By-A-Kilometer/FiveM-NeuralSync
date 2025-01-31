@@ -15,5 +15,5 @@ server_scripts {
 }
 
 dependencies {
-    './package.json'
+    'yarn'
 }
