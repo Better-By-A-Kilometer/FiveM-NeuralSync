@@ -1,3 +1,5 @@
+
+
 // Function to show an input box on the screen
 async function ShowKeyboard(): Promise<string> {
     var text = "";
@@ -48,6 +50,9 @@ function ShowNotification(text: string) {
 }
 
 CreateThread(function () {
+    const resourceName: string = GetCurrentResourceName();
+    const moduleName: string = "SmartPeds";
+    const ePrefix = `${resourceName}:${moduleName}`;
     RegisterCommand("talk", async function (source, args, rawCommand) {
         if (source <= 0) return;
 
@@ -60,7 +65,21 @@ CreateThread(function () {
 
         const msg = await ShowKeyboard();
         const response = exports[resourceName]['ai-message'](netId, "Stranger", msg);
-        emit("visualize-message", netId, msg);
+        
+        /* In case exports don't work on the client:
+        *
+        *
+            let response = "";
+            var code = GetGameTimer();
+            addRawEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, function (res) {
+                response = res;
+                removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`);
+            });
+        * 
+        *
+        */
+        
+        emit("visualize-message", netId, response);
     });
 
     RegisterKeyMapping("talk", "Talk to an AI", "keyboard", "e");  
