@@ -84,8 +84,6 @@ CreateThread(function () {
         * 
         *
         */
-        
-        emit("visualize-message", netId, response);
     });
 
     RegisterKeyMapping("talk", "Talk to an AI", "keyboard", "y");  
