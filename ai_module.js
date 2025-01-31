@@ -1,7 +1,7 @@
 // ENV: Server
-const resourceName = GetCurrentResourceName() || "Kilo_AIPeds";
-const OpenAI = require('openai');
 
+const OpenAI = require("openai");
+const resourceName = GetCurrentResourceName() || "Kilo_AIPeds";
 const {openaiKey} = LoadResourceFile(resourceName, "config.json");
 if (!openaiKey) throw new Error('OpenAI key not found in config.json!');
 
@@ -84,15 +84,16 @@ class Ped {
     }
 }
 
-exports('ai-message', async function (netId: number, name: string, message: string) {
-    const ped: Ped = GetPed(netId, name);
-    if (!ped) throw new Error("Ped should exist! This should not occur.");
-    const response = await ped.Ask(message);
-    emitNet("visualize-message", netId, response);
-    return response;
-});
-
-/* 
-* USAGE:
-* response = exports['Kilo_AIPeds']['ai-message'](networkId, name, message);
-* */
+CreateThread(function () {
+    exports('ai-message', async function (netId: number, name: string, message: string) {
+        const ped: Ped = GetPed(netId, name);
+        if (!ped) throw new Error("Ped should exist! This should not occur.");
+        const response = await ped.Ask(message);
+        emitNet("visualize-message", netId, response);
+        return response;
+    });
+    /* 
+    * USAGE:
+    * response = exports['Kilo_AIPeds']['ai-message'](networkId, name, message);
+    * */
+})

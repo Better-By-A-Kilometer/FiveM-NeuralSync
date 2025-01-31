@@ -35,9 +35,10 @@ function Draw3DText(text, ped, forever = false) {
         Wait(0);
     }
 }
-
-onNet('visualize-message', function (netId, message) {
-    var ped = NetworkGetEntityFromNetworkId(netId);
-    if (!ped) throw new Error(`Cannot visualize message for unknown ped [${netId}]`);
-    Draw3DText(message, ped);
-});
+CreateThread(function () {
+    onNet('visualize-message', function (netId, message) {
+        var ped = NetworkGetEntityFromNetworkId(netId);
+        if (!ped) throw new Error(`Cannot visualize message for unknown ped [${netId}]`);
+        Draw3DText(message, ped);
+    });  
+})
