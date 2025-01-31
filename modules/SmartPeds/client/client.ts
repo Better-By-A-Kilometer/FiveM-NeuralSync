@@ -1,6 +1,5 @@
-
-
 // Function to show an input box on the screen
+
 async function ShowKeyboard(): Promise<string> {
     var text = "";
     DisplayOnscreenKeyboard(0, "FMMC_KEY_TIP8", "", "", "", "", "", 100);
@@ -9,23 +8,26 @@ async function ShowKeyboard(): Promise<string> {
         if (UpdateOnscreenKeyboard() == 0) {
             DisableAllControlActions(0);
         }
-        Wait(0);
+        await Delay(0);
     }
     if (GetOnscreenKeyboardResult() == null) return text;
     return GetOnscreenKeyboardResult();
 }
 
-function GetClosestPedToPlayer(playerPed: number, radius: number) {
+const Delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+async function GetClosestPedToPlayer(playerPed: number, radius: number) {
     let closestPed = -1; // Default to -1 (no ped found)
-    let [playerCoordsX, playerCoordsY, playerCoordsZ] = GetEntityCoords(playerPed, false);
+    let playerCoords = GetEntityCoords(playerPed, false);
 
     const allPeds: number[] = GetGamePool('CPed'); // Get all peds in the game
     let closestDistance = -1; // To store the closest distance found so far
     // Loop through all peds to find the closest one
-    for (let ped of allPeds) {
-        let [pedCoordsX, pedCoordsY, pedCoordsZ] = GetEntityCoords(ped, false);
-        let distance = Vdist(playerCoordsX, playerCoordsY, playerCoordsZ, pedCoordsX, pedCoordsY, pedCoordsZ);
 
+    for (let ped of allPeds) {
+        if (ped == PlayerPedId()) continue;
+        let pedCoords = GetEntityCoords(ped, false);
+        let distance = Vdist(playerCoords[0], playerCoords[1], playerCoords[2], pedCoords[0], pedCoords[1], pedCoords[2]);
         // If closestDistance is -1 then we need to set it to the first distance
         if (closestDistance === -1) {
             closestDistance = distance;
@@ -37,8 +39,9 @@ function GetClosestPedToPlayer(playerPed: number, radius: number) {
             closestPed = ped;
             closestDistance = distance;
         }
-        Wait(0);
+        await Delay(0);
     }
+    console.log(closestDistance);
     return closestPed;
 }
 
@@ -54,34 +57,54 @@ const ePrefix = `${resourceName}:${moduleName}`;
 RegisterCommand("talk", async function (source: number) {
     if (source < 0) return;
 
-    var closestPed = GetClosestPedToPlayer(PlayerPedId(), 5.0);
+    var closestPed = await GetClosestPedToPlayer(PlayerPedId(), 5.0);
     if (closestPed < 0)
         return ShowNotification("There's no peds nearby to speak to.");
     var netId = NetworkGetNetworkIdFromEntity(closestPed) || -1;
     if (!netId || netId < 0)
         return ShowNotification("This ped isn't AI enabled!")
-
-    // Debug
-    console.log(`Script ID: ${NetworkGetEntityNetScriptId(closestPed)}`)
-    console.log(`IsNetworked: ${NetworkGetEntityIsNetworked(closestPed)}`)
-    console.log(`IsLocal: ${NetworkGetEntityIsLocal(closestPed)}`)
-    console.log(`Entity Owner ID: ${NetworkGetEntityOwner(closestPed)}`)
-    //
+    
+    emit("attentionPed", netId);
     const msg = await ShowKeyboard();
-    exports[resourceName]['ai-message'](netId, "Stranger", msg);
+    let response = "";
+    var code = GetGameTimer();
+    if (msg != "") {
+        function callback(res: string) {
+            response = res;
+            removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
+        }
+        addNetEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
+        emitNet(`${ePrefix}::sendAIMessage`, netId, "Stranger", msg);    
+    }
+}, false);
 
-    /* In case exports don't work on the client:
-    *
-    *
+let lastPed: number | undefined;
+
+async function PlayerSpeaks() {
+    lastPed = await GetClosestPedToPlayer(PlayerPedId(), 5.0);
+    var netId = NetworkGetNetworkIdFromEntity(lastPed);
+    emit("attentionPed", netId);
+}
+
+async function ParseVoiceMessage(text: string) {
+    if (!!lastPed) {
+        var netId = NetworkGetNetworkIdFromEntity(lastPed);
+        emit("attentionPed", netId);
         let response = "";
         var code = GetGameTimer();
-        addRawEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, function (res) {
-            response = res;
-            removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`);
-        });
-    * 
-    *
-    */
-}, false);
+        if (text != "") {
+            function callback(res: string) {
+                response = res;
+                removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
+            }
+            addNetEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
+            emitNet(`${ePrefix}::sendAIMessage`, netId, "Stranger", text);
+        }
+    }
+}
+
+
+on("KiloVoiceRecognition:PlayerSpeaks:Subscribe", PlayerSpeaks);
+on("KiloVoiceRecognition:VoiceMessage:Subscribe", ParseVoiceMessage);
 
 RegisterKeyMapping("talk", "Talk to an AI", "keyboard", "y");

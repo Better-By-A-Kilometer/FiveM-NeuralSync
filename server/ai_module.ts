@@ -1,5 +1,8 @@
 // ENV: Server
 
+// @ts-ignore
+import {ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam} from "openai";
+
 const OpenAI = require("openai");
 const resourceName = GetCurrentResourceName() || "Kilo_AIPeds";
 const config = JSON.parse(LoadResourceFile(resourceName, "config.json"));
@@ -10,23 +13,21 @@ const client = new OpenAI({
     apiKey: openaiKey
 });
 
-enum ConversationRoles {
-    user
-}
 
 class Conversation {
     get Conversation() {
         return this.conversationData;
     }
-    private conversationData = [{ role: 'system', content: "You are an average person living in a state called San Andreas. Your life is boring."}];
+    private conversationData: ChatCompletionMessageParam[] = [];
     private participants: Ped[] = []; // Array of Peds
     constructor() {}
 
-    AddMessage(role: ConversationRoles, message: string) {
+    AddMessage(role: "user" | "system", message: string) {
         this.conversationData.push({
-            role: role.toString(),
-            content: message
+            role: role,
+            content: message,
         });
+        return this.Conversation;
     }
 
     AddPed(ped: Ped) {
@@ -56,6 +57,8 @@ class Ped {
     private systemPrompt: string;
     private hasKids: boolean;
     private kids: number;
+    
+    private talking: boolean = false;
 
     constructor(netId: number, name: string) {
         this.netId = netId;
@@ -64,27 +67,43 @@ class Ped {
         this.kids = this.hasKids ? Math.min(1, Math.fround((Math.random() * 10) / 1.564656436546746)) : 0;
         this.systemPrompt = `DO NOT BREAK CHARACTER: You are an average person living in a state called San Andreas. Your life is boring. You keep to yourself. Your name is ${this.Name}. You ${this.kids ? `have ${this.kids} kids.` : "do not have kids."} You don't like to talk about your personal life.`;
     }
-
+    
     // This method is used to address the ped directly as the local player.
     async Ask(message: string) {
         if (!this.conversation)
             this.conversation = new Conversation();
-        this.conversation.AddMessage(ConversationRoles.user, `[World Time: "You don't have the time."] Player says to ${this.Name}: ${message}`);
+        this.conversation.AddMessage("system", this.systemPrompt);
+        //this.conversation.AddMessage("user", `[World Time: "You don't have the time."] Player says to ${this.Name}: ${message}`);
         // Ask the AI
-        const completion = await client.completions.create({
-            messages: this.conversation.Conversation,
+        const completion = await client.chat.completions.create({
+            messages: this.conversation.AddMessage("user", message),
             model: 'gpt-4o-mini'
         });
-        return completion.choices[0];
+        return !completion.choices[0].message.refusal ? completion.choices[0].message.content : "No response.";
     }
 }
-exports('ai-message', async function (netId: number, name: string, message: string) {
+
+export {}
+
+declare global {
+    interface CitizenExports {
+        Kilo_AIPeds: {
+            aiMessage(netId: number, name: string, message: string): Promise<string>;
+        }
+    }
+}
+
+async function aiMessage(netId: number, name: string, message: string, source: number) {
     const ped: Ped = GetPed(netId, name);
     if (!ped) throw new Error("Ped should exist! This should not occur.");
+    console.log("Check3");
     const response = await ped.Ask(message);
-    emitNet("visualize-message", netId, response);
+    
+    emitNet("visualizeMessage", -1, netId, response);
     return response;
-});
+}
+
+exports('aiMessage', aiMessage);
 /* 
 * USAGE:
 * response = exports['Kilo_AIPeds']['ai-message'](networkId, name, message);
