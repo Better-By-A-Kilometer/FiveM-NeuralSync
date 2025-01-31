@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": "16.20.2"
+    "node": "16.9.1"
   },
   "dependencies": {
     "openai": "^4.81.0"
