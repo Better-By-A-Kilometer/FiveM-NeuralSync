@@ -86,7 +86,7 @@ async function EndAttention(ped: number, duration: number) {
         await Delay(100);
         timeLeft -= 100;
     }
-    if (attention) {
+    if (attention && !pedsTalking[netId]) {
         SetBlockingOfNonTemporaryEvents(ped, false);
         SetPedKeepTask(ped, false);
         ClearPedTasks(ped);

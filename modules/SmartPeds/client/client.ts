@@ -21,18 +21,13 @@ async function GetClosestPedToPlayer(playerPed: number, radius: number) {
     let playerCoords = GetEntityCoords(playerPed, false);
 
     const allPeds: number[] = GetGamePool('CPed'); // Get all peds in the game
-    let closestDistance = -1; // To store the closest distance found so far
+    let closestDistance = 9999999999; // To store the closest distance found so far
     // Loop through all peds to find the closest one
 
     for (let ped of allPeds) {
         if (ped == PlayerPedId()) continue;
         let pedCoords = GetEntityCoords(ped, false);
         let distance = Vdist(playerCoords[0], playerCoords[1], playerCoords[2], pedCoords[0], pedCoords[1], pedCoords[2]);
-        // If closestDistance is -1 then we need to set it to the first distance
-        if (closestDistance === -1) {
-            closestDistance = distance;
-            closestPed = ped;
-        }
 
         // Check if the ped is within the radius and closer than the previous closest ped
         if (distance <= radius && (closestPed === 0 || distance < closestDistance)) {
@@ -41,7 +36,6 @@ async function GetClosestPedToPlayer(playerPed: number, radius: number) {
         }
         await Delay(0);
     }
-    console.log(closestDistance);
     return closestPed;
 }
 
@@ -59,7 +53,7 @@ RegisterCommand("talk", async function (source: number) {
 
     var closestPed = await GetClosestPedToPlayer(PlayerPedId(), 5.0);
     if (closestPed < 0)
-        return ShowNotification("There's no peds nearby to speak to.");
+        return;
     var netId = NetworkGetNetworkIdFromEntity(closestPed) || -1;
     if (!netId || netId < 0)
         return ShowNotification("This ped isn't AI enabled!")
@@ -82,12 +76,14 @@ let lastPed: number | undefined;
 
 async function PlayerSpeaks() {
     lastPed = await GetClosestPedToPlayer(PlayerPedId(), 5.0);
+    if (lastPed < 0) return;
     var netId = NetworkGetNetworkIdFromEntity(lastPed);
     emit("attentionPed", netId);
 }
 
 async function ParseVoiceMessage(text: string) {
     if (!!lastPed) {
+        if (lastPed < 0) return;
         var netId = NetworkGetNetworkIdFromEntity(lastPed);
         emit("attentionPed", netId);
         let response = "";
