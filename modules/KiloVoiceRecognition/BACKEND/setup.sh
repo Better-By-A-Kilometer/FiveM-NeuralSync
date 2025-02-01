@@ -18,8 +18,6 @@ sudo apt-get install python3 -y
 
 python3 -m venv ./
 
-
-
 ./bin/pip install -r requirements.txt
 
 sudo apt-get install ffmpeg -y
