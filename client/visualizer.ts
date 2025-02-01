@@ -1,12 +1,12 @@
 // ENV: Client
 
-const textOnPeds: {[key: number]: any} = {};
+const textOnPeds: { [key: number]: any } = {};
 
 // Function to draw text in 3D space
 async function Draw3DText(text: string, ped: any, forever = false) {
     let remainder;
     if (text.length > 60) {
-        remainder = "... "+text.substring(60);
+        remainder = "... " + text.substring(60);
         text = text.slice(0, 60) + " ...";
     }
     var netId = NetworkGetNetworkIdFromEntity(ped);
@@ -41,13 +41,13 @@ async function Draw3DText(text: string, ped: any, forever = false) {
         if (xy[0])
             DrawText(xy[1], xy[2]);
     });
-    
+
     while (textOnPeds[netId] === text && DoesEntityExist(ped)) {
         if (timeLeft < 0 && !forever) {
             break;
         }
-        var [px,py,pz] = GetEntityCoords(PlayerPedId(), true);
-        var [ex,ey,ez] = GetEntityCoords(ped, true);
+        var [px, py, pz] = GetEntityCoords(PlayerPedId(), true);
+        var [ex, ey, ez] = GetEntityCoords(ped, true);
         distance = Vdist(px, py, pz, ex, ey, ez);
         canSee = HasEntityClearLosToEntity(PlayerPedId(), ped, 17);
         if (distance > 5) break;
@@ -57,12 +57,13 @@ async function Draw3DText(text: string, ped: any, forever = false) {
     }
     if (task > -1)
         clearTick(task);
-    
+
     if (remainder && pedsTalking[netId])
         return await Draw3DText(remainder, ped, forever);
     else
-        pedsTalking[netId] = false;    
+        pedsTalking[netId] = false;
 }
+
 const Delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 const pedsTalking: { [key: number]: boolean } = {};
 let attention = false;
@@ -91,11 +92,12 @@ async function EndAttention(ped: number, duration: number) {
         SetPedKeepTask(ped, false);
         ClearPedTasks(ped);
         SetEntityAsNoLongerNeeded(ped);
-        attention = false;   
+        attention = false;
     }
-} 
+}
+
 RequestAnimDict('facials@gen_male@base');
-on('attentionPed', async function(netId: number) {
+on('attentionPed', async function (netId: number) {
     var ped = NetworkGetEntityFromNetworkId(netId);
     Attention(ped);
     EndAttention(ped, 10000);
