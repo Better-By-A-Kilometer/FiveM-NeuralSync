@@ -23,7 +23,6 @@ async function Draw3DText(text: string, ped: any, forever = false) {
     var y = pedCoords[1];
     var z = pedCoords[2];
     textOnPeds[netId] = text;
-
     let timeLeft = text.length * 80;
     let distance = -1;
     let canSee = true;
@@ -42,6 +41,7 @@ async function Draw3DText(text: string, ped: any, forever = false) {
         if (xy[0])
             DrawText(xy[1], xy[2]);
     });
+    
     while (textOnPeds[netId] === text && DoesEntityExist(ped)) {
         if (timeLeft < 0 && !forever) {
             break;
@@ -51,7 +51,7 @@ async function Draw3DText(text: string, ped: any, forever = false) {
         distance = Vdist(px, py, pz, ex, ey, ez);
         canSee = HasEntityClearLosToEntity(PlayerPedId(), ped, 17);
         if (distance > 5) break;
-        
+        PlayFacialAnim(ped, 'facials@gen_male@base', 'mood_talking_1');
         timeLeft -= 100;
         await Delay(100);
     }
@@ -94,7 +94,7 @@ async function EndAttention(ped: number, duration: number) {
         attention = false;   
     }
 } 
-
+RequestAnimDict('facials@gen_male@base');
 on('attentionPed', async function(netId: number) {
     var ped = NetworkGetEntityFromNetworkId(netId);
     Attention(ped);
