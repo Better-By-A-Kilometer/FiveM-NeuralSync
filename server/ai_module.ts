@@ -53,14 +53,12 @@ class Ped {
         return this.name;
     }
 
-    private netId: number;
-    private name: string;
+    private readonly netId: number;
+    private readonly name: string;
     private conversation: Conversation | undefined;
-    private systemPrompt: string;
-    private hasKids: boolean;
-    private kids: number;
-
-    private talking: boolean = false;
+    private readonly systemPrompt: string;
+    private readonly hasKids: boolean;
+    private readonly kids: number;
 
     constructor(netId: number, name: string) {
         this.netId = netId;
@@ -76,10 +74,9 @@ class Ped {
         if (!this.conversation)
             this.conversation = new Conversation();
         this.conversation.AddMessage("system", this.systemPrompt);
-        //this.conversation.AddMessage("user", `[World Time: "You don't have the time."] Player says to ${this.Name}: ${message}`);
         // Ask the AI
         const completion = await client.chat.completions.create({
-            messages: this.conversation.AddMessage("user", `[World Time]: "You don't have the time."] Player says to ${this.Name}: ${message}`),
+            messages: this.conversation.AddMessage("user", `[World Time]: "You don't have the current time."] Player says to ${this.Name}: ${message}`),
             model: 'gpt-4o-mini',
             max_tokens: 40
         });
@@ -100,7 +97,6 @@ declare global {
 async function aiMessage(netId: number, name: string, message: string, source: number) {
     const ped: Ped = GetPed(netId, name);
     if (!ped) throw new Error("Ped should exist! This should not occur.");
-    console.log("Check3");
     const response = await ped.Ask(message);
 
     emitNet("visualizeMessage", -1, netId, response);
