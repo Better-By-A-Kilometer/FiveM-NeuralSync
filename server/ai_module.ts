@@ -18,9 +18,11 @@ class Conversation {
     get Conversation() {
         return this.conversationData;
     }
+
     private conversationData: ChatCompletionMessageParam[] = [];
     private participants: Ped[] = []; // Array of Peds
-    constructor() {}
+    constructor() {
+    }
 
     AddMessage(role: "user" | "system", message: string) {
         this.conversationData.push({
@@ -36,7 +38,7 @@ class Conversation {
     }
 }
 
-const Peds: {[key: number]: Ped} = {};
+const Peds: { [key: number]: Ped } = {};
 
 function GetPed(netId: number, name: string) {
     return Peds[netId] ? Peds[netId] : new Ped(netId, name);
@@ -57,7 +59,7 @@ class Ped {
     private systemPrompt: string;
     private hasKids: boolean;
     private kids: number;
-    
+
     private talking: boolean = false;
 
     constructor(netId: number, name: string) {
@@ -67,17 +69,19 @@ class Ped {
         this.kids = this.hasKids ? Math.min(1, Math.fround((Math.random() * 10) / 1.564656436546746)) : 0;
         this.systemPrompt = `DO NOT BREAK CHARACTER: You are an average person living in a state called San Andreas. Your life is boring. You keep to yourself. Your name is ${this.Name}. You ${this.kids ? `have ${this.kids} kids.` : "do not have kids."} You don't like to talk about your personal life.`;
     }
-    
+
     // This method is used to address the ped directly as the local player.
     async Ask(message: string) {
+        // Investigate: Does chatgpt add its own responses into the conversation?
         if (!this.conversation)
             this.conversation = new Conversation();
         this.conversation.AddMessage("system", this.systemPrompt);
         //this.conversation.AddMessage("user", `[World Time: "You don't have the time."] Player says to ${this.Name}: ${message}`);
         // Ask the AI
         const completion = await client.chat.completions.create({
-            messages: this.conversation.AddMessage("user", message),
-            model: 'gpt-4o-mini'
+            messages: this.conversation.AddMessage("user", `[World Time]: "You don't have the time."] Player says to ${this.Name}: ${message}`),
+            model: 'gpt-4o-mini',
+            max_tokens: 40
         });
         return !completion.choices[0].message.refusal ? completion.choices[0].message.content : "No response.";
     }
@@ -98,7 +102,7 @@ async function aiMessage(netId: number, name: string, message: string, source: n
     if (!ped) throw new Error("Ped should exist! This should not occur.");
     console.log("Check3");
     const response = await ped.Ask(message);
-    
+
     emitNet("visualizeMessage", -1, netId, response);
     return response;
 }
