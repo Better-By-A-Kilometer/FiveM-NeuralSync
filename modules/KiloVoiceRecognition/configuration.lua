@@ -1,6 +1,6 @@
 Config = {}
 
-Config.Endpoint = "http://188.93.139.104:8000/speech"
+Config.Endpoint = "http://"..GetCurrentServerEndpoint()..":8000/speech"
 
 Config.Voices = {
     ["entorno"] = "esx_voicesystem:voice:entorno",

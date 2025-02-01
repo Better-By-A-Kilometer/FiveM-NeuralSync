@@ -77,7 +77,7 @@ function PerformReq(audioBlob, voiceUrl) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            $.post("http://KiloVoiceRecognition/send_text", xhr.responseText);
+            $.post(`http://${GetCurrentResourceName()}/send_text`, xhr.responseText);
         }
     };
     xhr.open("POST", voiceUrl, true);
