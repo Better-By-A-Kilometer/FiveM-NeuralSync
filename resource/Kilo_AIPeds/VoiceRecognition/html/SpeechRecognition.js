@@ -7,29 +7,11 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
         if (event.data.listening == "false") {
             document.getElementById('mic-icon').setAttribute('fill', 'red');
             document.getElementById("mic-status").innerHTML = "Speech Recognition Stopped";
-            document.getElementById("main-container").style.display = "inline-block";
-            var oldValue = document.getElementById("mic-status").innerHTML;
-            this.setTimeout(function() {
-                if (document.getElementById("mic-status").innerHTML != oldValue) return;
-                document.getElementById("main-container").style.display = "none";
-            }, 3500);
         }
         
         if (event.data.listening == "true") {
-            document.getElementById("main-container").classList.remove("slide-out-bck-center");
-            document.getElementById("main-container").classList.add("puff-in-center");
-            document.getElementById("recognized_text").innerHTML = "";
-            document.getElementById('detected_action').innerHTML = "";
-            document.getElementById("options").style.display = "none";
             document.getElementById('mic-icon').setAttribute('fill', 'green');
             document.getElementById("mic-status").innerHTML = "Speech Recognition Started";
-            document.getElementById("main-container").style.display = "inline-block";
-
-            var oldValue = document.getElementById("mic-status").innerHTML;
-            this.setTimeout(function() {
-                if (document.getElementById("mic-status").innerHTML != oldValue) return;
-                document.getElementById("main-container").style.display = "none";
-            }, 3500);
         }
         
         
@@ -39,27 +21,11 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
                 mediaRecorder.stop();
                 document.getElementById('mic-icon').setAttribute('fill', 'yellow');
                 document.getElementById("mic-status").innerHTML = "Speech Recognition (Processing)";
-                document.getElementById("main-container").style.display = "inline-block";
                 mediaRecorder.addEventListener("stop", () => {
                     const audioBlob = new Blob(audioChunks);
                     PerformReq(audioBlob, event.data.url);
                     // audio.play();
                 });
-                var oldValue = document.getElementById("mic-status").innerHTML;
-                this.setTimeout(function() {
-                    if (document.getElementById("mic-status").innerHTML != oldValue) return;
-                    document.getElementById("main-container").style.display = "inline-block";
-                    document.getElementById('mic-icon').setAttribute('fill', 'green');
-                    document.getElementById("mic-status").innerHTML = "Speech Recognition Started";
-                    document.getElementById("main-container").style.display = "inline-block";
-
-                    var oldValue = document.getElementById("mic-status").innerHTML;
-                    this.setTimeout(function() {
-                        if (document.getElementById("mic-status").innerHTML != oldValue) return;
-                        document.getElementById("main-container").style.display = "none";
-                    }, 3500);
-
-                }, 3500);
             }, 150)
         }
         
@@ -80,12 +46,6 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
             });
             document.getElementById("main-container").style.display = "inline-block";
             // console.log("Voice Recognition has started");
-
-            var oldValue = document.getElementById("mic-status").innerHTML;
-            this.setTimeout(function() {
-                if (document.getElementById("mic-status").innerHTML != oldValue) return;
-                document.getElementById("main-container").style.display = "none";
-            }, 3500);
         }
 
         if (event.data.action) {
