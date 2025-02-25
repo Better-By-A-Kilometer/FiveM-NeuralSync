@@ -1,0 +1,13 @@
+/node_modules
+config.json
+/build/*.*
+/.idea/
+/resource/**/
+/resource/*
+/resource/Kilo_AIPeds/
+/resource/Kilo_AIPeds/VoiceRecognition/
+/resource/Kilo_AIPeds/SmartPeds/
+*.ts/*.js
+/**/*.ts/*.js
+/**/**/*.ts/*.js
+/**/**/**/*.ts/*.js

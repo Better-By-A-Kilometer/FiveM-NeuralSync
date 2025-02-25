@@ -1,0 +1,6 @@
+pip
+mutagen
+fastapi
+logging
+wit
+uvicorn
