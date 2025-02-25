@@ -1,0 +1,26 @@
+# Installation Steps
+
+**Setting up Speech-To-Text Capabilities:**
+1. Go to https://wit.ai/ and create an account
+2. Create a New Application (Make Sure to set your visibility to Private and the Recognition Language to whatever you want)
+3. Once the Application has been created make sure to go the Management -> Settings tab
+4. There you will find the Server Access Token (API Key) which will be used to process all the Voice Recognition requests, copy it.
+5. Open KiloVoiceRecognition/BACKEND/speech_server.py in a text editor
+6. At the top (line 17) you'll see "api_keys = ["
+7. Replace "API_KEY_HERE" with your Wit.ai API Key. (This will enable Speech-To-Text capabilities for the python script.)
+
+# This guide is ONLY FOR UBUNTU, you'll have to find your own way to achieve this if you're not on Ubuntu.
+
+**Setting up and starting the speech server** (Inside KiloVoiceRecognition/BACKEND)
+1. On Ubuntu: run `chmod u+x ./setup.sh` and run `chmod u+x ./start.sh` and run `chmod u+x ./uninstall.sh` (Other Operating systems, find your alternative. This basically gives the file permissions to execute.)
+2. On Ubuntu: run `./setup.sh` (Enter in your public IPv4 or press ENTER to accept the default)
+3. On Ubuntu: run `./start.sh`. Enjoy!
+4. On Ubuntu: Install pm2. run `npm install -g npm` (Requires NodeJS)
+5. On Ubuntu: Run `pm2 start ./start.sh` to run the script in the background
+6. On Ubuntu: Run `pm2 startup` to ensure the script runs on server startup.
+7. On Ubuntu: Run `pm2 save` whenever you make changes so it saves to the startup script.
+
+
+# Known Issues & Fixes
+- If any .sh file isn't working and you're on ubuntu, install dos2unix (apt install dos2unix) and run dox2unix ./setup.sh (or the SH file with the issue).
+- If setup.sh isn't working, try running uninstall.sh and then setup.sh. This can happen if the folder is moved around.
