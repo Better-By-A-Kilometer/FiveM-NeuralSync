@@ -116,7 +116,7 @@ function PerformReq(audioBlob, voiceUrl) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            $.post(`http://KiloAIPeds/send_text`, xhr.responseText);
+            $.post(`http://NeuralSync/send_text`, xhr.responseText);
         }
     };
     xhr.open("POST", voiceUrl, true);
