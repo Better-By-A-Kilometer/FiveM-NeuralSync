@@ -23,4 +23,5 @@
 
 # Known Issues & Fixes
 - If any .sh file isn't working and you're on ubuntu, install dos2unix (apt install dos2unix) and run dox2unix ./setup.sh (or the SH file with the issue).
+- If you get an error "cannot execute", install dos2unix (apt install dos2unix) and run dox2unix ./setup.sh (or the SH file with the issue).
 - If setup.sh isn't working, try running uninstall.sh and then setup.sh. This can happen if the folder is moved around.
