@@ -5,7 +5,7 @@
   "dependencies": {
     "openai": "^4.81.0"
   },
-  "name": "fivem-ai-peds",
+  "name": "neuralsync",
   "version": "1.0.0",
   "main": "ai_module.js",
   "scripts": {
