@@ -53,14 +53,13 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
                     document.getElementById("mic-status").innerHTML = "Speech Recognition Started";
                     document.getElementById("main-container").style.display = "inline-block";
 
-                    var oldValue = document.getElementById("mic-status").innerHTML;
+                    oldValue = document.getElementById("mic-status").innerHTML;
                     this.setTimeout(function() {
                         if (document.getElementById("mic-status").innerHTML != oldValue) return;
                         document.getElementById("main-container").style.display = "none";
                     }, 3500);
-
-                }, 3500);
-            }, 150)
+                }, 1500);
+            }, 150);
         }
         
 
@@ -117,7 +116,7 @@ function PerformReq(audioBlob, voiceUrl) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            $.post(`http://${GetCurrentResourceName()}/send_text`, xhr.responseText);
+            $.post(`http://KiloAIPeds/send_text`, xhr.responseText);
         }
     };
     xhr.open("POST", voiceUrl, true);

@@ -1,6 +1,8 @@
 Config = {}
 
-Config.Endpoint = "http://"..GetCurrentServerEndpoint()..":8000/speech"
+local endpoint = string.gsub(GetCurrentServerEndpoint() or "", ":%d+", "");
+
+Config.Endpoint = "http://"..endpoint..":8000/speech"
 
 Config.Voices = {
     ["entorno"] = "esx_voicesystem:voice:entorno",

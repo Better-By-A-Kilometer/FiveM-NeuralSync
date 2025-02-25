@@ -1,24 +1,27 @@
-record = nil
+record = false;
 speech_token = nil
 speech_url = nil
 listening = false;
 
 Citizen.CreateThread(function()
-    RegisterKeyMapping('voicerecognition', 'Activate Voice Recognition', 'KEYBOARD', "Z")
+    RegisterKeyMapping('voicerecognition', 'Activate Voice Recognition', 'KEYBOARD', "Z");
 end)
 
 function Listen()
+    print("Running Listen");
     if not listening then return end;
     while listening do
         local current = NetworkIsPlayerTalking(GetPlayerIndex());
         if not record and current then
             record = true;
+            print("Recording")
             SendNUIMessage({
                 record = "true"
             });    
             TriggerEvent("KiloVoiceRecognition:PlayerSpeaks:Subscribe");
         elseif record and not current then
             record = false;
+            print("Stopped Recording")
             SendNUIMessage({
                 record = "false",
                 url = Config.Endpoint,
@@ -30,6 +33,8 @@ end
 
 RegisterCommand('voicerecognition', function()
     listening = not listening;
+    print("Listening: "..tostring(listening));
+    Citizen.CreateThread(Listen);
     SendNUIMessage({
         listening = tostring(listening)
     });
