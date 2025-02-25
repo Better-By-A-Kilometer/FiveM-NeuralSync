@@ -18,12 +18,11 @@ async function Draw3DText(text: string, ped: any, forever = false) {
     pedsTalking[netId] = true;
     textOnPeds[netId] = null;
     var pedCoords = GetEntityCoords(ped, false);
-    console.log(pedCoords);
     var x = pedCoords[0];
     var y = pedCoords[1];
     var z = pedCoords[2];
     textOnPeds[netId] = text;
-    let timeLeft = text.length * 80;
+    let timeLeft = text.length * 60;
     let distance = -1;
     let canSee = true;
     let task = -1;
