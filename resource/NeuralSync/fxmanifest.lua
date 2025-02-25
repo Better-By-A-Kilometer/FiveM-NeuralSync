@@ -1,5 +1,5 @@
 game 'gta5'
-fx_version 'cerulean'
+fx_version 'adamant'
 
 name 'NeuralSync'
 author 'DevKilo, Jonirulah'
