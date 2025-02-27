@@ -68,6 +68,12 @@ const Actions: {[key: string]: Function} = {
             TaskCombatPed(handle, plrHandle, 0, 16);
         else
             ClearPedTasks(handle);
+    },
+    action_dismiss: function (ped: Ped, tool: any) {
+        const handle = NetworkGetEntityFromNetworkId(ped.NetworkId);
+        const args = JSON.parse(tool.function.arguments);
+        if (args.dismiss)
+            ClearPedTasks(handle);
     }
 }
 
