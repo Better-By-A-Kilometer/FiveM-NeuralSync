@@ -110,6 +110,22 @@ class Ped {
                 },
                 strict: true
             }
+        },
+        {
+            type: "function",
+            function: {
+                name: "action_dismiss",
+                description: "Dismiss the conversation.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        dismiss: { type: "boolean" }
+                    },
+                    required: ["dismiss"],
+                    additionalProperties: false
+                },
+                strict: true
+            }
         }
     ]
 
