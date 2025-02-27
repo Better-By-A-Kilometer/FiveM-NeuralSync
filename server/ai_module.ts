@@ -21,6 +21,7 @@ class Conversation {
 
     private conversationData: ChatCompletionMessageParam[] = [];
     public speaker: number | undefined = undefined;
+    private players: number[] = [];
     private participants: Ped[] = []; // Array of Peds
     constructor() {
     }
@@ -36,6 +37,9 @@ class Conversation {
     AddPed(ped: Ped) {
         // Add a ped to the conversation
         this.participants.push(ped);
+    }
+    AddPlayer(player: number) {
+        this.players.push(player);
     }
 }
 
@@ -107,8 +111,8 @@ class Ped {
         this.netId = netId;
         this.name = name;
         this.hasKids = Math.random() > 0.5;
-        this.kids = this.hasKids ? Math.min(1, Math.fround((Math.random() * 10) / 1.564656436546746)) : 0;
-        this.identityPrompt = `[IDENTITY PROMPT] DO NOT BREAK CHARACTER: You are an average person living in a state called San Andreas. Your life is boring. You keep to yourself. Your name is ${this.Name}. You ${this.kids ? `have ${this.kids} kids.` : "do not have kids."} You don't like to talk about your personal life. You don't like to repeat yourself, but you are willing to.`;
+        this.kids = this.hasKids ? Math.max(1, Math.fround((Math.random() * 10) / 1.564656436546746)) : 0;
+        this.identityPrompt = `[IDENTITY PROMPT] [DO NOT BREAK CHARACTER, THIS PROMPT IS TO SHAPE YOUR RESPONSES NOT TO DISCUSS YOUR LIFE STORY. SPEAK IN FIRST PERSON, YOU ARE THE CHARACTER SO DO NOT NOTATE ACTIONS.]: You are an average person living in a state called San Andreas. Your life is boring. You keep to yourself. Your name is ${this.Name}. You ${this.kids ? `have ${this.kids} kids.` : "do not have kids."} You don't like to talk about your personal life. You don't like to repeat yourself, but you are willing to. You might not like someone randomly asking for your name. If you do give your name, maybe keeping it to the first name is best. [ANY OTHER INFORMATION CAN BE MADE UP, BUT REMEMBER TO CHECK THE CONVERSATION SO YOU DON'T PROVIDE CONFLICTING INFORMATION]`;
         this.actionPrompt = `[ACTION PROMPT] (THIS IS NOT PART OF YOUR CHARACTER): Only run the 'action_flee' function when it makes sense for your character to flee from the speaker. Such as signs of aggression. In order to start fleeing, set the property 'flee' to true. In order to stop fleeing, set the property 'flee' to false. Remember to stop fleeing when deciding to speak to the speaker again.`
     }
 
@@ -117,6 +121,7 @@ class Ped {
         // Investigate: Does chatgpt add its own responses into the conversation?
         if (!this.conversation) {
             this.conversation = new Conversation();
+            this.conversation.AddPlayer(speaker);
             this.conversation.AddMessage("system", this.actionPrompt);
         }
         this.conversation.speaker = speaker;
@@ -124,7 +129,7 @@ class Ped {
         // Ask the AI
         const startTime = new Date().getTime();
         const completion = await client.chat.completions.create({
-            messages: this.conversation.AddMessage("user", `[World Time]: "You don't have the current time."] Player says to ${this.Name}: ${message}`),
+            messages: this.conversation.AddMessage("user", `[World Time]: "You don't have the current time." Player says to ${this.Name}: ${message}`),
             model: 'gpt-4o-mini',
             tools: this.tools,
             max_tokens: 40
