@@ -53,7 +53,8 @@ const moduleName: string = "SmartPeds";
 const ePrefix = `${resourceName}:${moduleName}`;
 
 function GenerateName() {
-    return firstNames[GetRandomIntInRange(0, firstNames.length - 1)] + lastNames[GetRandomIntInRange(0, lastNames.length - 1)];
+    console.log(firstNames);
+    return firstNames[GetRandomIntInRange(0, firstNames.length - 1)] + " " + lastNames[GetRandomIntInRange(0, lastNames.length - 1)];
 }
 
 RegisterCommand("talk", async function (source: number) {
@@ -102,7 +103,7 @@ async function ParseVoiceMessage(text: string) {
                 removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
             }
             addNetEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
-            emitNet(`${ePrefix}::sendAIMessage`, netId, "Stranger", text);
+            emitNet(`${ePrefix}::sendAIMessage`, netId, GenerateName(), text);
         }
     }
 }
