@@ -55,6 +55,15 @@ const Actions: {[key: string]: Function} = {
         }
         else
             ClearPedTasks(handle);
+    },
+    action_attack: function (ped: Ped, tool: any) {
+        const plrHandle = NetworkGetEntityFromNetworkId(ped.conversation!.speaker!);
+        const handle = NetworkGetEntityFromNetworkId(ped.NetworkId);
+        const args = JSON.parse(tool.function.arguments);
+        if (args.attack)
+            TaskCombatPed(handle, plrHandle, 0, 16);
+        else
+            ClearPedTasks(handle);
     }
 }
 
