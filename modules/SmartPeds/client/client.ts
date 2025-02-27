@@ -1,5 +1,7 @@
 // Function to show an input box on the screen
 
+const firstNames: string[] = JSON.parse(LoadResourceFile(GetCurrentResourceName(), "SmartPeds/first_names.json") ?? "{}");
+const lastNames: string[] = JSON.parse(LoadResourceFile(GetCurrentResourceName(), "SmartPeds/last_names.json") ?? "{}");
 async function ShowKeyboard(): Promise<string> {
     var text = "";
     DisplayOnscreenKeyboard(0, "FMMC_KEY_TIP8", "", "", "", "", "", 100);
@@ -49,6 +51,11 @@ function ShowNotification(text: string) {
 const resourceName: string = GetCurrentResourceName();
 const moduleName: string = "SmartPeds";
 const ePrefix = `${resourceName}:${moduleName}`;
+
+function GenerateName() {
+    return firstNames[GetRandomIntInRange(0, firstNames.length - 1)] + lastNames[GetRandomIntInRange(0, lastNames.length - 1)];
+}
+
 RegisterCommand("talk", async function (source: number) {
     if (source < 0) return;
 
@@ -69,7 +76,7 @@ RegisterCommand("talk", async function (source: number) {
             removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
         }
         addNetEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
-        emitNet(`${ePrefix}::sendAIMessage`, netId, "Stranger", msg);    
+        emitNet(`${ePrefix}::sendAIMessage`, netId, GenerateName(), msg);    
     }
 }, false);
 
