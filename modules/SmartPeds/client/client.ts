@@ -107,7 +107,7 @@ async function ParseVoiceMessage(text: string) {
                 removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
             }
             addNetEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
-            emitNet(`${ePrefix}::sendAIMessage`, netId, GenerateName(netId), text);
+            emitNet(`${ePrefix}::sendAIMessage`, netId, GenerateName(netId), IsPedMale(lastPed) ? "male" : "female", text);
         }
     }
 }
