@@ -50,9 +50,9 @@ const Actions: {[key: string]: Function} = {
         const plrHandle = NetworkGetEntityFromNetworkId(ped.conversation!.speaker!);
         const handle = NetworkGetEntityFromNetworkId(ped.NetworkId);
         const args = JSON.parse(tool.function.arguments);
-        console.log("action_flee", args.flee)
-        if (args.flee)
+        if (args.flee) {
             TaskReactAndFleePed(handle, plrHandle);
+        }
         else
             ClearPedTasks(handle);
     }
@@ -100,7 +100,7 @@ class Ped {
         this.hasKids = Math.random() > 0.5;
         this.kids = this.hasKids ? Math.min(1, Math.fround((Math.random() * 10) / 1.564656436546746)) : 0;
         this.identityPrompt = `[IDENTITY PROMPT] DO NOT BREAK CHARACTER: You are an average person living in a state called San Andreas. Your life is boring. You keep to yourself. Your name is ${this.Name}. You ${this.kids ? `have ${this.kids} kids.` : "do not have kids."} You don't like to talk about your personal life. You don't like to repeat yourself, but you are willing to.`;
-        this.actionPrompt = `[ACTION PROMPT]: Only run the 'action_flee' function when it makes sense for your character to flee from the speaker. Such as signs of aggression. In order to start fleeing, set the property 'flee' to true. In order to stop fleeing, set the property 'flee' to false. Remember to stop fleeing when deciding to speak to the speaker again.`
+        this.actionPrompt = `[ACTION PROMPT] (THIS IS NOT PART OF YOUR CHARACTER): Only run the 'action_flee' function when it makes sense for your character to flee from the speaker. Such as signs of aggression. In order to start fleeing, set the property 'flee' to true. In order to stop fleeing, set the property 'flee' to false. Remember to stop fleeing when deciding to speak to the speaker again.`
     }
 
     // This method is used to address the ped directly as the local player.
@@ -151,7 +151,7 @@ async function aiMessage(netId: number, name: string, message: string, source: s
     if (!ped) throw new Error("Ped should exist! This should not occur.");
     const player = GetPlayerPed(source);
     const playerNetId = NetworkGetNetworkIdFromEntity(player);
-    const response = await ped.Ask(message, -1);
+    const response = await ped.Ask(message, playerNetId);
     if (response)
         emitNet("visualizeMessage", -1, netId, response);
     return response;
