@@ -52,9 +52,13 @@ const resourceName: string = GetCurrentResourceName();
 const moduleName: string = "SmartPeds";
 const ePrefix = `${resourceName}:${moduleName}`;
 
-function GenerateName() {
-    console.log(firstNames);
-    return firstNames[GetRandomIntInRange(0, firstNames.length - 1)] + " " + lastNames[GetRandomIntInRange(0, lastNames.length - 1)];
+const PedsWithNames: {[key: number]: string} = {};
+
+function GenerateName(netId: number) {
+    if (!PedsWithNames[netId]) {
+        PedsWithNames[netId] = firstNames[GetRandomIntInRange(0, firstNames.length - 1)] + " " + lastNames[GetRandomIntInRange(0, lastNames.length - 1)];
+    }
+    return PedsWithNames[netId];
 }
 
 RegisterCommand("talk", async function (source: number) {
@@ -77,7 +81,7 @@ RegisterCommand("talk", async function (source: number) {
             removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
         }
         addNetEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
-        emitNet(`${ePrefix}::sendAIMessage`, netId, GenerateName(), msg);    
+        emitNet(`${ePrefix}::sendAIMessage`, netId, GenerateName(netId), msg);    
     }
 }, false);
 
@@ -103,7 +107,7 @@ async function ParseVoiceMessage(text: string) {
                 removeEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
             }
             addNetEventListener(`${ePrefix}::sendAIMessage:Code=${code}`, callback);
-            emitNet(`${ePrefix}::sendAIMessage`, netId, GenerateName(), text);
+            emitNet(`${ePrefix}::sendAIMessage`, netId, GenerateName(netId), text);
         }
     }
 }
