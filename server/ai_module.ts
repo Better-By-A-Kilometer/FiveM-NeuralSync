@@ -112,6 +112,22 @@ class Ped {
             }
         },
         {
+          type: "function",
+          function: {
+              name: "action_attack",
+              description: "Attack the speaker.",
+              parameters: {
+                  type: "object",
+                  properties: {
+                      attack: { type: "boolean" }
+                  },
+                  required: ["attack"],
+                  additionalProperties: false
+              },
+              strict: true
+          }  
+        },
+        {
             type: "function",
             function: {
                 name: "action_dismiss",
