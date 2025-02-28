@@ -45,7 +45,7 @@ class Conversation {
 
 const Peds: { [key: number]: Ped } = {};
 
-function GetPed(netId: number, name: string) {
+function GetPed(netId: number, name: string, gender: string) {
     return Peds[netId] ? Peds[netId] : new Ped(netId, name);
 }
 
@@ -85,9 +85,16 @@ class Ped {
     get Name() {
         return this.name;
     }
+    
+    get Gender() {
+        return this.gender;
+    }
+    
+    
 
     private readonly netId: number;
     private readonly name: string;
+    private readonly gender: string;
     public conversation: Conversation | undefined;
     private readonly identityPrompt: string;
     private readonly actionPrompt: string;
@@ -112,6 +119,22 @@ class Ped {
             }
         },
         {
+          type: "function",
+          function: {
+              name: "action_attack",
+              description: "Attack the speaker.",
+              parameters: {
+                  type: "object",
+                  properties: {
+                      attack: { type: "boolean" }
+                  },
+                  required: ["attack"],
+                  additionalProperties: false
+              },
+              strict: true
+          }  
+        },
+        {
             type: "function",
             function: {
                 name: "action_dismiss",
@@ -129,13 +152,14 @@ class Ped {
         }
     ]
 
-    constructor(netId: number, name: string) {
+    constructor(netId: number, name: string, gender: string = "male") {
         this.netId = netId;
         this.name = name;
+        this.gender = gender;
         this.hasKids = Math.random() > 0.5;
         this.kids = this.hasKids ? Math.max(1, Math.fround((Math.random() * 10) / 1.564656436546746)) : 0;
-        this.identityPrompt = `[IDENTITY PROMPT] [DO NOT BREAK CHARACTER, THIS PROMPT IS TO SHAPE YOUR RESPONSES NOT TO DISCUSS YOUR LIFE STORY. SPEAK IN FIRST PERSON, YOU ARE THE CHARACTER SO DO NOT NOTATE ACTIONS.]: You are an average person living in a state called San Andreas. Your life is boring. You keep to yourself. Your name is ${this.Name}. You ${this.kids ? `have ${this.kids} kids.` : "do not have kids."} You don't like to talk about your personal life. You don't like to repeat yourself, but you are willing to. You might not like someone randomly asking for your name. If you do give your name, maybe keeping it to the first name is best. [ANY OTHER INFORMATION CAN BE MADE UP, BUT REMEMBER TO CHECK THE CONVERSATION SO YOU DON'T PROVIDE CONFLICTING INFORMATION]`;
-        this.actionPrompt = `[ACTION PROMPT] (THIS IS NOT PART OF YOUR CHARACTER): Only run the 'action_flee' function when it makes sense for your character to flee from the speaker. Such as signs of aggression. In order to start fleeing, set the property 'flee' to true. In order to stop fleeing, set the property 'flee' to false. Remember to stop fleeing when deciding to speak to the speaker again.`
+        this.identityPrompt = `[IDENTITY PROMPT] [DO NOT BREAK CHARACTER, THIS PROMPT IS TO SHAPE YOUR RESPONSES NOT TO DISCUSS YOUR LIFE STORY. SPEAK IN FIRST PERSON, YOU ARE THE CHARACTER SO DO NOT NOTATE ACTIONS.]: You are an average person living in a state called San Andreas. Your life is boring. You keep to yourself. Your name is ${this.Name} and you are ${this.Gender}. You ${this.kids ? `have ${this.kids} kids.` : "do not have kids."} You don't like to talk about your personal life. You don't like to repeat yourself, but you are willing to. You might not like someone randomly asking for your name. If you do give your name, maybe keeping it to the first name is best. Males are more aggressive and defensive for others. [ANY OTHER INFORMATION CAN BE MADE UP, BUT REMEMBER TO CHECK THE CONVERSATION SO YOU DON'T PROVIDE CONFLICTING INFORMATION]. Use casual language when responding to people.`;
+        this.actionPrompt = `[ACTION PROMPT] (THIS IS NOT PART OF YOUR CHARACTER): Only run the 'action_flee' function when it makes sense for your character to flee from the speaker. The way to deal with aggression is to fight with the 'action_flee' function, which is what you may decide to do if you are a male character. In order to start fleeing, set the property 'flee' to true. In order to stop fleeing, set the property 'flee' to false. Remember to stop fleeing when deciding to speak to the speaker again. Sometimes it's not necessary to flee, though. Surely nothing bad will happen if you just keep talking to the speaker. If you need to defend yourself or someone else, aggression may be the answer. You can call the function 'action_attack' to teach the speaker a lesson. If you are a female, you're more likely to just flee though.`
     }
 
     // This method is used to address the ped directly as the local player.
@@ -177,13 +201,13 @@ export {}
 declare global {
     interface CitizenExports {
         Kilo_AIPeds: {
-            aiMessage(netId: number, name: string, message: string): Promise<string>;
+            aiMessage(netId: number, name: string, gender: string, message: string, source: string): Promise<string>;
         }
     }
 }
 
-async function aiMessage(netId: number, name: string, message: string, source: string) {
-    const ped: Ped = GetPed(netId, name);
+async function aiMessage(netId: number, name: string, gender: string, message: string, source: string) {
+    const ped: Ped = GetPed(netId, name, gender);
     if (!ped) throw new Error("Ped should exist! This should not occur.");
     const player = GetPlayerPed(source);
     const playerNetId = NetworkGetNetworkIdFromEntity(player);
