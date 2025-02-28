@@ -28,7 +28,7 @@ async function GetClosestPedToPlayer(playerPed: number, radius: number) {
 
     for (let ped of allPeds) {
         if (ped == PlayerPedId()) continue;
-        if (IsEntityDead(ped) || IsPedFleeing(ped) || IsPedShooting(ped)) continue;
+        if (IsEntityDead(ped) || IsPedFleeing(ped) || IsPedShooting(ped) || IsPedAPlayer(ped)) continue;
         let pedCoords = GetEntityCoords(ped, false);
         let distance = Vdist(playerCoords[0], playerCoords[1], playerCoords[2], pedCoords[0], pedCoords[1], pedCoords[2]);
 
@@ -95,6 +95,7 @@ async function PlayerSpeaks() {
 }
 
 async function ParseVoiceMessage(text: string) {
+    console.log("Got voice message: "+text);
     if (!!lastPed) {
         if (lastPed < 0) return;
         var netId = NetworkGetNetworkIdFromEntity(lastPed);
