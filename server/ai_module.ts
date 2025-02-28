@@ -151,7 +151,7 @@ class Ped {
         // Ask the AI
         const startTime = new Date().getTime();
         const completion = await client.chat.completions.create({
-            messages: this.conversation.AddMessage("user", `[World Time]: "You don't have the current time." Player says to ${this.Name}: ${message}`),
+            messages: this.conversation.AddMessage("user", `Player says to ${this.Name}: ${message}`),
             model: 'gpt-4o-mini',
             tools: this.tools,
             max_tokens: 40
