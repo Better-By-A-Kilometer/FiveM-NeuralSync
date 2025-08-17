@@ -86,7 +86,7 @@ async function EndAttention(ped: number, duration: number) {
         await Delay(100);
         timeLeft -= 100;
     }
-    if (attention && !pedsTalking[netId]) {
+    if (attention && !pedsTalking[netId] && !(Entity(ped).state['NeuralSync:HoldDispose'] ?? false)) {
         SetBlockingOfNonTemporaryEvents(ped, false);
         SetPedKeepTask(ped, false);
         ClearPedTasks(ped);
