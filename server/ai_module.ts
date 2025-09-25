@@ -308,7 +308,7 @@ Threat assessment:
     }
 
     // This method is used to address the ped directly as the local player.
-    async Ask(message: string, speaker: number, source: string) {
+    async Ask(message: string, speaker: number, source: string) {5
         const memory = this.getMemory(speaker);
 
         const plr = NetworkGetEntityFromNetworkId(speaker);
@@ -364,7 +364,6 @@ They have previously ${memory.hostilityFlags.join(", ") || "had neutral interact
 
         return !completionMessage.refusal && !toolCalls ? completionMessage.content : undefined;
     }
-
 }
 
 export {}
